@@ -134,6 +134,7 @@ export function useFavorites() {
       const merged = await syncToServer(local);
       snapshot = merged;
       writeStorage(merged);
+      notifyAll();
       setSynced(true);
     };
 

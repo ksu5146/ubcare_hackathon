@@ -36,21 +36,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid body' }, { status: 400 });
   }
 
-  await client.batch(
-    favorites.map((f) => ({
-      sql: 'INSERT OR IGNORE INTO user_favorites (user_id, apt_name, dong, lawd_cd, latest_price, build_year, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      args: [
-        Number(userRow.id),
-        f.aptName,
-        f.dong,
-        f.lawdCd,
-        f.latestPrice ?? 0,
-        f.buildYear ?? 0,
-        f.addedAt ?? new Date().toISOString(),
-      ],
-    })),
-    'write',
-  );
+  // 로컬 데이터가 있으면 DB에 병합 (INSERT OR IGNORE)
+  if (favorites.length > 0) {
+    await client.batch(
+      favorites.map((f) => ({
+        sql: 'INSERT OR IGNORE INTO user_favorites (user_id, apt_name, dong, lawd_cd, latest_price, build_year, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        args: [
+          Number(userRow.id),
+          f.aptName,
+          f.dong,
+          f.lawdCd,
+          f.latestPrice ?? 0,
+          f.buildYear ?? 0,
+          f.addedAt ?? new Date().toISOString(),
+        ],
+      })),
+      'write',
+    );
+  }
 
   // 동기화 후 전체 목록 반환
   const rows = (
