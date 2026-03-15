@@ -144,6 +144,7 @@ const providers = hasKakaoCredentials
   : [];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers,
   callbacks: {
     async signIn({ account, profile, user }) {
