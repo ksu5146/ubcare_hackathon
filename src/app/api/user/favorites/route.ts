@@ -11,7 +11,7 @@ async function getUserId(kakaoId: string): Promise<number | null> {
       args: [kakaoId],
     })
   ).rows[0] as unknown as { id: number } | undefined;
-  return row?.id ?? null;
+  return row?.id != null ? Number(row.id) : null;
 }
 
 /** GET: 즐겨찾기 목록 조회 */

@@ -11,7 +11,7 @@ async function getUserId(kakaoId: string): Promise<number | null> {
       args: [kakaoId],
     })
   ).rows[0] as unknown as { id: number } | undefined;
-  return row?.id ?? null;
+  return row?.id != null ? Number(row.id) : null;
 }
 
 interface CompareItem {
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
     }
 
     return {
-      id: r.id,
+      id: Number(r.id),
       name: r.name,
       items,
       type: r.type as 'history' | 'bookmark',
@@ -135,9 +135,9 @@ export async function POST(req: NextRequest) {
     if (existing) {
       await client.execute({
         sql: "UPDATE user_comparisons SET apt_names = ?, created_at = datetime('now') WHERE id = ?",
-        args: [JSON.stringify(items), existing.id],
+        args: [JSON.stringify(items), Number(existing.id)],
       });
-      return NextResponse.json({ success: true, id: existing.id });
+      return NextResponse.json({ success: true, id: Number(existing.id) });
     }
 
     // 히스토리 최대 10개 유지
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
       for (const old of oldest) {
         await client.execute({
           sql: 'DELETE FROM user_comparisons WHERE id = ?',
-          args: [old.id],
+          args: [Number(old.id)],
         });
       }
     }

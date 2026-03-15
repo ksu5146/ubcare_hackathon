@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     favorites.map((f) => ({
       sql: 'INSERT OR IGNORE INTO user_favorites (user_id, apt_name, dong, lawd_cd, latest_price, build_year, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
       args: [
-        userRow.id,
+        Number(userRow.id),
         f.aptName,
         f.dong,
         f.lawdCd,
