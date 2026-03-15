@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
     args: [userId, displayName, JSON.stringify(items), '', '', type],
   });
 
-  return NextResponse.json({ success: true, id: insertResult.lastInsertRowid });
+  return NextResponse.json({ success: true, id: Number(insertResult.lastInsertRowid) });
 }
 
 /** PATCH: 히스토리 → 즐겨찾기 전환 또는 이름 변경 */
