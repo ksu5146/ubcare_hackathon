@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, MapPin, Clock, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import type { LocationSearchResult } from '@/types/location';
 
@@ -37,7 +38,35 @@ function saveRecentSearch(place: RecentPlace): void {
   }
 }
 
+// ── DB API 헬퍼 (로그인 사용자용) ──
+
+async function fetchSavedWorkplace(): Promise<RecentPlace | null> {
+  try {
+    const res = await fetch('/api/user/workplace');
+    if (!res.ok) return null;
+    const { workplace } = await res.json();
+    return workplace ? { name: workplace.name, lat: workplace.lat, lng: workplace.lng } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function saveWorkplaceToDb(place: RecentPlace): Promise<void> {
+  try {
+    await fetch('/api/user/workplace', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(place),
+    });
+  } catch {
+    // 실패 시 무시 — 로컬 동작은 유지됨
+  }
+}
+
 export function WorkplaceSearch({ onSelect }: WorkplaceSearchProps) {
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === 'authenticated' && !!(session as any)?.kakaoId;
+
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<LocationSearchResult[]>([]);
   const [recents, setRecents] = useState<RecentPlace[]>([]);
@@ -49,10 +78,22 @@ export function WorkplaceSearch({ onSelect }: WorkplaceSearchProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 최근 검색 로드
+  // 최근 검색 로드: 로그인 시 DB, 비로그인 시 localStorage
   useEffect(() => {
-    setRecents(getRecentSearches());
-  }, []);
+    if (status === 'loading') return;
+
+    if (isLoggedIn) {
+      fetchSavedWorkplace().then((saved) => {
+        if (saved) {
+          setRecents([saved]);
+        } else {
+          setRecents(getRecentSearches());
+        }
+      });
+    } else {
+      setRecents(getRecentSearches());
+    }
+  }, [isLoggedIn, status]);
 
   // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
@@ -102,11 +143,18 @@ export function WorkplaceSearch({ onSelect }: WorkplaceSearchProps) {
       setQuery(place.name);
       setIsOpen(false);
       setActiveIndex(-1);
-      saveRecentSearch(place);
-      setRecents(getRecentSearches());
+
+      if (isLoggedIn) {
+        saveWorkplaceToDb(place);
+        setRecents([place]);
+      } else {
+        saveRecentSearch(place);
+        setRecents(getRecentSearches());
+      }
+
       onSelect(place);
     },
-    [onSelect],
+    [isLoggedIn, onSelect],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -177,11 +225,11 @@ export function WorkplaceSearch({ onSelect }: WorkplaceSearchProps) {
             'absolute z-50 mt-1 w-full overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-card-md)]',
           )}
         >
-          {/* 최근 검색 */}
+          {/* 최근 검색 / 저장된 직장 */}
           {showRecents && (
             <div>
               <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                최근 검색
+                {isLoggedIn ? '저장된 직장' : '최근 검색'}
               </div>
               <ul>
                 {recents.map((place, idx) => (

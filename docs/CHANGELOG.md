@@ -21,6 +21,9 @@
 - **Vercel 배포**: Turso 원격 DB 연동, .npmrc 로컬 전용 설정
 - **Vercel Cron 자동 수집**: 매 1시간 라운드 로빈 증분 수집 (6개 지역/회, 11시간에 66개 전체 순회)
 - **배포 가이드 전면 재작성**: docs/DEPLOYMENT.md (VPS → Vercel + Turso)
+- **필터 즐겨찾기 DB 전환**: localStorage → 로그인 시 DB 저장/조회, 비로그인 시 localStorage 폴백
+- **직장 위치 DB 전환**: 동일 패턴 (사용자당 1개 UPSERT)
+- **저장 알림 토스트**: 관심단지 추가/해제, 비교분석 저장 시 성공/실패 알림
 
 ### 의사결정 근거
 - **better-sqlite3 → @libsql/client 전환**: Vercel 서버리스 함수는 로컬 파일시스템에 지속 상태를 유지할 수 없다. better-sqlite3는 네이티브 바이너리를 사용하며 파일 기반 SQLite에 의존하므로 Vercel 환경에서 배포가 불가능했다. Turso(libSQL)는 원격 HTTP 프로토콜을 통해 서버리스 함수와 통신하며, 네이티브 바이너리 없이 동작하여 Vercel 배포 제약을 해소한다.

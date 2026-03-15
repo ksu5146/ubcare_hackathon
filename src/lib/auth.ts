@@ -50,10 +50,30 @@ async function initUserSchema(): Promise<void> {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS user_filter_bookmarks (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id    INTEGER NOT NULL,
+      name       TEXT NOT NULL,
+      filters    TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS user_workplace (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id    INTEGER NOT NULL UNIQUE,
+      name       TEXT NOT NULL,
+      lat        REAL NOT NULL,
+      lng        REAL NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
     CREATE INDEX IF NOT EXISTS idx_users_kakao ON users(kakao_id);
     CREATE INDEX IF NOT EXISTS idx_user_favorites_user ON user_favorites(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_comparisons_user ON user_comparisons(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_filters_user ON user_filters(user_id);
+    CREATE INDEX IF NOT EXISTS idx_filter_bm_user ON user_filter_bookmarks(user_id);
   `);
 }
 
@@ -88,6 +108,40 @@ async function migrateUserSchema(): Promise<void> {
     }
   } catch {
     // 테이블이 아직 없으면 무시 (initUserSchema에서 생성됨)
+  }
+
+  // user_filter_bookmarks 테이블 마이그레이션
+  try {
+    await client.executeMultiple(`
+      CREATE TABLE IF NOT EXISTS user_filter_bookmarks (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id    INTEGER NOT NULL,
+        name       TEXT NOT NULL,
+        filters    TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+      CREATE INDEX IF NOT EXISTS idx_filter_bm_user ON user_filter_bookmarks(user_id);
+    `);
+  } catch {
+    // 이미 존재하면 무시
+  }
+
+  // user_workplace 테이블 마이그레이션
+  try {
+    await client.executeMultiple(`
+      CREATE TABLE IF NOT EXISTS user_workplace (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id    INTEGER NOT NULL UNIQUE,
+        name       TEXT NOT NULL,
+        lat        REAL NOT NULL,
+        lng        REAL NOT NULL,
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+    `);
+  } catch {
+    // 이미 존재하면 무시
   }
 }
 

@@ -236,3 +236,31 @@
 ### `DELETE /api/user/comparisons`
 - **설명**: 비교분석 삭제
 - **요청 본문**: `{ id }`
+
+---
+
+### `GET /api/user/filter-bookmarks`
+- **설명**: 필터 즐겨찾기 목록 조회
+- **응답**: `{ bookmarks: [{ id, name, filters: FilterState, createdAt }] }`
+
+### `POST /api/user/filter-bookmarks`
+- **설명**: 필터 즐겨찾기 추가 (최대 10개)
+- **요청 본문**: `{ name: string, filters: FilterState }`
+- **응답**: `{ success: true, id: number }`
+
+### `DELETE /api/user/filter-bookmarks`
+- **설명**: 필터 즐겨찾기 삭제
+- **요청 본문**: `{ id: number }`
+
+---
+
+### `GET /api/user/workplace`
+- **설명**: 저장된 직장 위치 조회
+- **응답**: `{ workplace: { name, lat, lng } | null }`
+
+### `POST /api/user/workplace`
+- **설명**: 직장 위치 저장/업데이트 (UPSERT, 사용자당 1개)
+- **요청 본문**: `{ name: string, lat: number, lng: number }`
+
+### `DELETE /api/user/workplace`
+- **설명**: 직장 위치 삭제
