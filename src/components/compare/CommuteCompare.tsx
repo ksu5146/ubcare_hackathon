@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Building2, Clock, ArrowLeftRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchTransit } from '@/lib/odsay-client';
 import { geocodeComplex, BUSINESS_DISTRICTS } from '@/lib/kakao-geocode';
 import type { TransitResult } from '@/types/location';
 
@@ -71,21 +72,11 @@ export default function CommuteCompare({ complexes, colors }: CommuteCompareProp
           const district = BUSINESS_DISTRICTS[idx];
 
           try {
-            const params = new URLSearchParams({
-              sx: String(origin.lng),
-              sy: String(origin.lat),
-              ex: String(district.lng),
-              ey: String(district.lat),
-            });
-            const res = await fetch(`/api/transit?${params.toString()}`, {
-              signal: AbortSignal.timeout(30000),
-            });
-            const json = await res.json();
+            const result = await fetchTransit(origin.lng, origin.lat, district.lng, district.lat);
 
             if (cancelled) return;
 
-            if (json.success && json.data) {
-              const result: TransitResult = json.data;
+            if (result) {
               setData((prev) => {
                 const arr = [...(prev[complex.name] ?? [])];
                 arr[idx] = {
@@ -104,7 +95,7 @@ export default function CommuteCompare({ complexes, colors }: CommuteCompareProp
                   totalTime: null,
                   transferCount: null,
                   summary: null,
-                  error: json.error ?? '조회 실패',
+                  error: '경로를 찾을 수 없습니다',
                   isLoading: false,
                 };
                 return { ...prev, [complex.name]: arr };

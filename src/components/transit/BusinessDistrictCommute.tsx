@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Building2, Clock, ArrowLeftRight, RotateCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { geocodeComplex, BUSINESS_DISTRICTS } from '@/lib/kakao-geocode';
+import { fetchTransit } from '@/lib/odsay-client';
 import type { TransitResult } from '@/types/location';
 
 interface DistrictResult {
@@ -79,30 +80,20 @@ export function BusinessDistrictCommute({ aptName, dong, lawdCd, lat, lng }: Bus
         });
 
         try {
-          const params = new URLSearchParams({
-            sx: String(origin!.lng),
-            sy: String(origin!.lat),
-            ex: String(district.lng),
-            ey: String(district.lat),
-          });
-
-          const res = await fetch(`/api/transit?${params.toString()}`, {
-            signal: AbortSignal.timeout(30000),
-          });
-          const json = await res.json();
+          const result = await fetchTransit(origin!.lng, origin!.lat, district.lng, district.lat);
 
           if (cancelled) return;
 
-          if (json.success) {
+          if (result) {
             setDistricts((prev) => {
               const next = [...prev];
-              next[idx] = { ...next[idx], result: json.data, isLoading: false };
+              next[idx] = { ...next[idx], result, isLoading: false };
               return next;
             });
           } else {
             setDistricts((prev) => {
               const next = [...prev];
-              next[idx] = { ...next[idx], error: json.error ?? '조회 실패', isLoading: false };
+              next[idx] = { ...next[idx], error: '경로를 찾을 수 없습니다', isLoading: false };
               return next;
             });
           }

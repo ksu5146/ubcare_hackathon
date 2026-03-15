@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Clock, ArrowLeftRight, Wallet, Route } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchTransit as fetchTransitApi } from '@/lib/odsay-client';
 import type { TransitResult } from '@/types/location';
 
 interface CommuteResultProps {
@@ -30,22 +31,14 @@ export function CommuteResult({ origin, destination }: CommuteResultProps) {
       setResult(null);
 
       try {
-        const params = new URLSearchParams({
-          sx: String(origin!.lng),
-          sy: String(origin!.lat),
-          ex: String(destination!.lng),
-          ey: String(destination!.lat),
-        });
-
-        const res = await fetch(`/api/transit?${params.toString()}`);
-        const json = await res.json();
+        const data = await fetchTransitApi(origin!.lng, origin!.lat, destination!.lng, destination!.lat);
 
         if (cancelled) return;
 
-        if (json.success) {
-          setResult(json.data as TransitResult);
+        if (data) {
+          setResult(data);
         } else {
-          setError(json.error ?? '경로 조회에 실패했습니다');
+          setError('경로를 찾을 수 없습니다');
         }
       } catch {
         if (!cancelled) {
