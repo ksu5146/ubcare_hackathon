@@ -454,7 +454,7 @@ function SearchContent() {
             </button>
           </div>
           <p className="mt-1 text-center text-[10px] text-gray-400">
-            Ctrl+클릭으로 단지를 추가/해제할 수 있습니다
+            Ctrl+클릭 (모바일: 길게 누르기)으로 단지를 추가/해제할 수 있습니다
           </p>
         </div>
       )}

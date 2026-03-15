@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Lint, Type Check, Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+        env:
+          NEXT_PUBLIC_KAKAO_MAP_KEY: dummy_kakao_map_key_for_ci
+          NEXT_PUBLIC_ODSAY_API_KEY: dummy_odsay_api_key_for_ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+        env:
+          NEXT_PUBLIC_KAKAO_MAP_KEY: dummy_kakao_map_key_for_ci
+          NEXT_PUBLIC_ODSAY_API_KEY: dummy_odsay_api_key_for_ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_KAKAO_MAP_KEY: dummy_kakao_map_key_for_ci
+          NEXT_PUBLIC_ODSAY_API_KEY: dummy_odsay_api_key_for_ci

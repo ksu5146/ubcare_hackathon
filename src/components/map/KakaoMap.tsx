@@ -319,11 +319,40 @@ export function KakaoMap({
 
       el.addEventListener('mouseenter', () => onHoverRef.current(complex.aptName));
       el.addEventListener('mouseleave', () => onHoverRef.current(null));
+
+      // Long-press support for mobile (500ms)
+      let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+      let longPressFired = false;
+
+      el.addEventListener('touchstart', (e: TouchEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-fav-btn]')) return;
+        longPressFired = false;
+        longPressTimer = setTimeout(() => {
+          longPressFired = true;
+          onCtrlSelectRef.current?.(complex.aptName);
+        }, 500);
+      }, { passive: true });
+
+      const cancelLongPress = () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      };
+
+      el.addEventListener('touchend', cancelLongPress, { passive: true });
+      el.addEventListener('touchmove', cancelLongPress, { passive: true });
+
       el.addEventListener('click', (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         if (target.closest('[data-fav-btn]')) {
           e.stopPropagation();
           onToggleFavoriteRef.current?.(complex);
+          return;
+        }
+        if (longPressFired) {
+          longPressFired = false;
           return;
         }
         if ((e.ctrlKey || e.metaKey) && onCtrlSelectRef.current) {

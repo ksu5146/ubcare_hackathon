@@ -95,7 +95,7 @@ export function SearchOverlayGuide({ forceShow, onClose }: Props = {}) {
                 <p className="mt-3 text-sm leading-relaxed text-gray-600">
                   지도 마커 또는 목록 카드를<br />
                   <kbd className="mx-0.5 rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-mono font-bold text-gray-700">Ctrl</kbd>
-                  + 클릭하면 비교 대상에 추가됩니다.
+                  + 클릭 (모바일: 길게 누르기)하면 비교 대상에 추가됩니다.
                 </p>
                 <div className="mt-4 flex items-center justify-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
                   <div className="flex items-center gap-1.5">

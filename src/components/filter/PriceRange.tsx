@@ -48,14 +48,14 @@ export function PriceRange({ value, onChange }: PriceRangeProps) {
         </Slider.Track>
         <Slider.Thumb
           className={cn(
-            'block h-4 w-4 rounded-full border-2 border-estate-500 bg-white shadow',
+            'block h-11 w-11 rounded-full border-2 border-estate-500 bg-white shadow',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-estate-500 focus-visible:ring-offset-2',
           )}
           aria-label="최소 가격"
         />
         <Slider.Thumb
           className={cn(
-            'block h-4 w-4 rounded-full border-2 border-estate-500 bg-white shadow',
+            'block h-11 w-11 rounded-full border-2 border-estate-500 bg-white shadow',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-estate-500 focus-visible:ring-offset-2',
           )}
           aria-label="최대 가격"

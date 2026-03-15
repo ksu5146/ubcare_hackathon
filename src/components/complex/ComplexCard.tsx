@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Heart, TrendingUp, TrendingDown, Calendar, CheckCircle2, TrainFront } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -35,6 +35,8 @@ function formatDate(dateStr: string): string {
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+const LONG_PRESS_DELAY = 500;
+
 export const ComplexCard = memo(function ComplexCard({
   complex,
   lawdCd,
@@ -47,6 +49,25 @@ export const ComplexCard = memo(function ComplexCard({
   onToggleFavorite,
   index = 0,
 }: ComplexCardProps) {
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFired = useRef(false);
+
+  const handleTouchStart = useCallback(() => {
+    if (!onCtrlClick) return;
+    longPressFired.current = false;
+    longPressTimer.current = setTimeout(() => {
+      longPressFired.current = true;
+      onCtrlClick(complex.aptName);
+    }, LONG_PRESS_DELAY);
+  }, [onCtrlClick, complex.aptName]);
+
+  const cancelLongPress = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
   const queryString = useMemo(() => {
     const q = new URLSearchParams();
     q.set('dong', complex.dong);
@@ -71,7 +92,15 @@ export const ComplexCard = memo(function ComplexCard({
       style={{ animationDelay: `${Math.min(index * 40, 300)}ms` }}
       onMouseEnter={() => onHover?.(complex.aptName)}
       onMouseLeave={() => onHover?.(null)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={cancelLongPress}
+      onTouchMove={cancelLongPress}
       onClick={(e) => {
+        if (longPressFired.current) {
+          e.preventDefault();
+          longPressFired.current = false;
+          return;
+        }
         if ((e.ctrlKey || e.metaKey) && onCtrlClick) {
           e.preventDefault();
           onCtrlClick(complex.aptName);
