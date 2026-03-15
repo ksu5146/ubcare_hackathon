@@ -70,6 +70,9 @@ export default function FavoritesList({ open, onOpenChange }: FavoritesListProps
           <div className="mb-4 flex items-center justify-between">
             <Dialog.Title className="text-lg font-bold text-estate-900">
               나의관심단지
+              <span className="ml-2 text-sm font-normal text-gray-400">
+                {favorites.length}/20
+              </span>
             </Dialog.Title>
             <Dialog.Close asChild>
               <button

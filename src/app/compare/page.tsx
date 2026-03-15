@@ -267,7 +267,7 @@ function CompareGuide({ histories, bookmarks, removeComparison, bookmarkComparis
               <div className="border-b border-gray-100 px-5 py-3.5">
                 <h2 className="flex items-center gap-2 text-sm font-semibold text-amber-700">
                   <Bookmark className="h-4 w-4" />
-                  저장된 비교 ({bookmarks.length})
+                  저장된 비교 ({bookmarks.length}/10)
                 </h2>
               </div>
               <ul className="divide-y divide-gray-50">
@@ -290,7 +290,7 @@ function CompareGuide({ histories, bookmarks, removeComparison, bookmarkComparis
               <div className="border-b border-gray-100 px-5 py-3.5">
                 <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-600">
                   <Clock className="h-4 w-4" />
-                  최근 비교 이력 ({histories.length})
+                  최근 비교 이력 ({histories.length}/10)
                 </h2>
               </div>
               <ul className="divide-y divide-gray-50">
@@ -365,7 +365,7 @@ function CompareHistoryView() {
               <div className="border-b border-gray-100 px-5 py-3.5">
                 <h2 className="flex items-center gap-2 text-sm font-semibold text-amber-700">
                   <Bookmark className="h-4 w-4" />
-                  저장된 비교 ({bookmarks.length})
+                  저장된 비교 ({bookmarks.length}/10)
                 </h2>
               </div>
               <ul className="divide-y divide-gray-50">
@@ -402,7 +402,7 @@ function CompareHistoryView() {
             <div className="border-b border-gray-100 px-5 py-3.5">
               <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-600">
                 <Clock className="h-4 w-4" />
-                최근 비교 이력 ({histories.length})
+                최근 비교 이력 ({histories.length}/10)
               </h2>
             </div>
             {histories.length === 0 ? (
@@ -744,7 +744,7 @@ function CompareContent() {
                     <div>
                       <div className="border-b border-gray-100 px-4 py-2.5">
                         <p className="flex items-center gap-1.5 text-xs font-semibold text-amber-700">
-                          <Bookmark className="h-3.5 w-3.5" /> 저장된 비교 ({bookmarks.length})
+                          <Bookmark className="h-3.5 w-3.5" /> 저장된 비교 ({bookmarks.length}/10)
                         </p>
                       </div>
                       <ul className="max-h-40 overflow-y-auto py-1">
@@ -774,7 +774,7 @@ function CompareContent() {
                   <div>
                     <div className={cn('border-b border-gray-100 px-4 py-2.5', bookmarks.length > 0 && 'border-t')}>
                       <p className="flex items-center gap-1.5 text-xs font-semibold text-gray-500">
-                        <Clock className="h-3.5 w-3.5" /> 최근 비교 이력 ({histories.length})
+                        <Clock className="h-3.5 w-3.5" /> 최근 비교 이력 ({histories.length}/10)
                       </p>
                     </div>
                     {histories.length === 0 ? (
