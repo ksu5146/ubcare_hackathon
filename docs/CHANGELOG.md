@@ -19,6 +19,8 @@
 - **AI FAB 버튼 애니메이션**: bounce + glow 합성 애니메이션
 - **API 엔드포인트 문서**: docs/API_ENDPOINTS.md 신규 작성
 - **Vercel 배포**: Turso 원격 DB 연동, .npmrc 로컬 전용 설정
+- **Vercel Cron 자동 수집**: 매 1시간 라운드 로빈 증분 수집 (6개 지역/회, 11시간에 66개 전체 순회)
+- **배포 가이드 전면 재작성**: docs/DEPLOYMENT.md (VPS → Vercel + Turso)
 
 ---
 
