@@ -1,6 +1,6 @@
 # Architecture — 부동산 매수 도우미
 
-> v2.3 기준 (2026-03-15) / AI 인사이트, 확장 필터, 데이터 수집기 UI, 즐겨찾기 독립 데이터 패스 반영
+> v2.4 기준 (2026-03-15) / Turso 마이그레이션, Vercel 배포, ODsay 클라이언트 전환, 비교분석 가이드 UI 반영
 
 ## 기술 스택
 
@@ -14,7 +14,7 @@
 | Icons | lucide-react | 0.577 |
 | Font | Pretendard Variable (local) | 1.3.9 |
 | Maps | Kakao Maps JS SDK (dynamic load) | v3 |
-| **Local DB** | **SQLite (better-sqlite3)** | **latest** |
+| **Local DB** | **Turso (@libsql/client, libSQL)** | **latest** |
 | **Auth** | **NextAuth v5 (beta) + Kakao Provider** | **5.x** |
 
 ## 디렉토리 구조
@@ -324,9 +324,10 @@ CREATE INDEX idx_complexes_lawd   ON complexes(lawd_cd);
 | `DATA_GO_KR_API_KEY` | 서버 | 공공데이터포털 인증키 (배치 수집 및 학교/인구 API) |
 | `KAKAO_REST_API_KEY` | 서버 | 카카오 REST API (장소 검색, 단지 지오코딩) |
 | `NEXT_PUBLIC_KAKAO_MAP_KEY` | 클라이언트 | 카카오맵 JS SDK |
-| `ODSAY_API_KEY` | 서버 | ODsay 대중교통 API |
+| `NEXT_PUBLIC_ODSAY_API_KEY` | 클라이언트 | ODsay 대중교통 API (브라우저 직접 호출) |
 | `SEOUL_OPEN_DATA_KEY` | 서버 | 서울열린데이터 (정비사업, optional) |
-| `SQLITE_DB_PATH` | 서버 | SQLite DB 파일 경로 (기본: `./real-estate.db`) |
+| `TURSO_DATABASE_URL` | 서버 | Turso DB URL (예: `libsql://xxx.turso.io`) |
+| `TURSO_AUTH_TOKEN` | 서버 | Turso 인증 토큰 |
 | `NEXTAUTH_SECRET` | 서버 | NextAuth JWT 암호화 시크릿 (v2.2 신규) |
 | `NEXTAUTH_URL` | 서버 | NextAuth 콜백 URL (기본: `http://localhost:3000`) |
 | `KAKAO_CLIENT_ID` | 서버 | 카카오 OAuth 클라이언트 ID (v2.2 신규) |

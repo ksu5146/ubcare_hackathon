@@ -2,6 +2,26 @@
 
 ---
 
+## [v2.4] Turso 마이그레이션 + Vercel 배포 — 2026-03-15
+
+### 변경
+- **Turso(libSQL) 마이그레이션**: better-sqlite3 → @libsql/client 전환, 모든 DB 함수 async 변환
+- **next.config.ts 정리**: output: 'standalone' 및 serverExternalPackages 제거
+- **ODsay API 클라이언트 전환**: 서버 프록시 → 브라우저 직접 호출 (NEXT_PUBLIC_ODSAY_API_KEY)
+- **주변분석 탭 제거**: mock 데이터 품질 문제로 비활성화
+- **비교 테이블 확장**: 건물지표 + 단지평가 행 추가
+- **AI 인사이트 NaN 수정**: scores 타입 Record<string, number>로 변경
+- **DB 좌표 직접 전달**: ComplexInfo에 lat/lng 추가, 지오코딩 의존성 제거
+- **InfoTooltip**: 건물지표/단지평가 용어 설명 툴팁 추가
+
+### 추가
+- **비교분석 가이드 UI**: Navbar 가이드 버튼 + 검색 페이지 오버레이 튜토리얼
+- **AI FAB 버튼 애니메이션**: bounce + glow 합성 애니메이션
+- **API 엔드포인트 문서**: docs/API_ENDPOINTS.md 신규 작성
+- **Vercel 배포**: Turso 원격 DB 연동, .npmrc 로컬 전용 설정
+
+---
+
 ## [v2.3] 기능 고도화 — 2026-03-15
 
 ### 추가

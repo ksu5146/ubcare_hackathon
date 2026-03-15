@@ -77,25 +77,27 @@
 | **전환 기준** | 일일 외부 API 호출 5,000건 초과 시 Redis 도입 (RoadMap ADR-001) |
 | **참고** | v2.0부터 실거래가/단지 데이터는 SQLite에서 조회하므로 캐시 부담 대폭 감소 |
 
-## 10. 로컬 DB: SQLite (better-sqlite3) ★ v2.0 신규
+## 10. DB: Turso (@libsql/client) ★ v2.0 도입 → v2.4 전환
 
 | 항목 | 내용 |
 |------|------|
 | **선정 이유** | 수도권 3년치 실거래가를 사전 수집하여 저장, 런타임 API 호출 없이 즉시 조회 가능 |
-| **라이브러리** | `better-sqlite3` — 동기 API로 Next.js Route Handler와 자연스럽게 통합, 고성능 |
-| **대안 1** | PostgreSQL (Supabase/Neon) — 외부 서비스 의존, 네트워크 레이턴시, 비용 발생 |
-| **대안 2** | Redis — 관계형 쿼리 미지원, 복잡한 필터(JOIN, 범위 조건) 구현 불편 |
-| **대안 3** | 인메모리 Map — 서버 재시작 시 소멸, 대용량(수백만 건) 적재 불가 |
-| **파일 크기 예상** | 수도권 3년치 약 500만 건 × 평균 300B ≈ 1.5GB |
-| **Vercel 배포** | 파일 크기 제한으로 Vercel 배포 시 Turso (libsql) 또는 Cloudflare D1 전환 검토 |
-| **개발 환경** | 파일 기반 (`real-estate.db`) — 외부 서비스 불필요, 로컬 개발 간편 |
+| **v2.0 초기** | `better-sqlite3` 사용 — 동기 API, 로컬 파일 기반, 개발 환경 간편 |
+| **v2.4 전환** | `@libsql/client` (Turso/libSQL)로 전환 — Vercel Serverless 환경에서 원격 DB 사용 가능 |
+| **전환 이유** | Vercel Serverless는 읽기 전용 파일시스템 → SQLite 파일 사용 불가. Turso는 libSQL 기반 원격 DB로 드롭인 전환 가능 |
+| **라이브러리** | `@libsql/client` — async API, HTTP/WebSocket 기반 원격 연결, SQLite 호환 쿼리 문법 |
+| **대안 1** | PostgreSQL (Supabase/Neon) — SQL 문법 전면 변환 필요, 마이그레이션 비용 높음 |
+| **대안 2** | Cloudflare D1 — Vercel 배포 시 Workers 환경 필요, 플랫폼 종속 |
+| **대안 3** | PlanetScale — MySQL 기반, libSQL 문법과 다름 |
+| **환경변수** | `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` |
+| **개발 환경** | `file:real-estate.db` (로컬 파일), 프로덕션: Turso 원격 DB |
 
 ```
-SQLite (better-sqlite3) 선정 근거 요약:
-  - 파일 기반: 외부 DB 서버 불필요, 배포 복잡도 최소
-  - 동기 API: async/await 없이 Route Handler에서 직접 사용
-  - 성능: WAL 모드 + 인덱스로 수백만 건 필터 쿼리 수십ms 이내
-  - 이식성: Turso(libSQL)로 드롭인 전환 가능 (배포 환경 대응)
+Turso(@libsql/client) 전환 근거 요약:
+  - Vercel 호환: 서버리스 환경에서 원격 DB URL로 연결, 파일시스템 제약 없음
+  - libSQL 호환: SQLite 문법 그대로 사용 가능 (스키마 변경 불필요)
+  - 로컬 개발: file: URL로 로컬 파일 DB 그대로 사용 가능
+  - async API: Next.js Route Handler의 async/await 패턴과 자연스럽게 통합
 ```
 
 ## 11. Auth: NextAuth v5 (beta) ★ v2.2 신규
