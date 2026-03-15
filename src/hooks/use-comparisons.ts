@@ -133,12 +133,12 @@ export function useComparisons() {
 
       if (isLoggedIn) {
         try {
-          await fetch('/api/user/comparisons', {
+          const res = await fetch('/api/user/comparisons', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ items, type: 'history' }),
           });
-          fetchRecords();
+          if (res.ok) fetchRecords();
         } catch {}
       } else {
         addLocalHistory(items);

@@ -277,7 +277,7 @@ function CompareGuide({ histories, bookmarks, removeComparison, bookmarkComparis
                       <p className="truncate text-sm font-medium text-gray-900">{rec.name}</p>
                       <p className="truncate text-xs text-gray-400">{rec.items.map((i) => i.name).join(', ')}</p>
                     </button>
-                    <button type="button" onClick={() => removeComparison(String(rec.id))} className="shrink-0 rounded-full p-1.5 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500">
+                    <button type="button" onClick={() => removeComparison(String(rec.id))} className="shrink-0 rounded-full p-1.5 text-gray-300 text-gray-400 hover:text-red-500">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </li>
@@ -300,7 +300,7 @@ function CompareGuide({ histories, bookmarks, removeComparison, bookmarkComparis
                       <p className="truncate text-sm text-gray-900">{rec.items.map((i) => i.name).join(' vs ')}</p>
                       <p className="text-[10px] text-gray-400">{new Date(rec.createdAt).toLocaleDateString('ko-KR')}</p>
                     </button>
-                    <div className="flex shrink-0 items-center gap-0.5 opacity-0 group-hover:opacity-100">
+                    <div className="flex shrink-0 items-center gap-0.5 opacity-70 hover:opacity-100">
                       <button type="button" onClick={() => bookmarkComparison(String(rec.id))} className="rounded-full p-1 text-gray-300 hover:text-amber-500" title="저장">
                         <Bookmark className="h-3 w-3" />
                       </button>
@@ -387,7 +387,7 @@ function CompareHistoryView() {
                     <button
                       type="button"
                       onClick={() => removeComparison(rec.id)}
-                      className="shrink-0 rounded-full p-1.5 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                      className="shrink-0 rounded-full p-1.5 text-gray-300 text-gray-400 hover:text-red-500 transition-all"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -436,7 +436,7 @@ function CompareHistoryView() {
                         })}
                       </p>
                     </button>
-                    <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex shrink-0 items-center gap-1 opacity-70 hover:opacity-100 transition-opacity">
                       <button
                         type="button"
                         onClick={() => bookmarkComparison(rec.id)}
@@ -761,7 +761,7 @@ function CompareContent() {
                             <button
                               type="button"
                               onClick={() => removeComparison(rec.id)}
-                              className="shrink-0 rounded-full p-1 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500"
+                              className="shrink-0 rounded-full p-1 text-gray-300 text-gray-400 hover:text-red-500"
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -793,7 +793,7 @@ function CompareContent() {
                                 {new Date(rec.createdAt).toLocaleDateString('ko-KR')}
                               </p>
                             </Link>
-                            <div className="flex shrink-0 items-center gap-0.5 opacity-0 group-hover:opacity-100">
+                            <div className="flex shrink-0 items-center gap-0.5 opacity-70 hover:opacity-100">
                               <button
                                 type="button"
                                 onClick={() => bookmarkComparison(rec.id)}
