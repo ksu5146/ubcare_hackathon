@@ -158,13 +158,17 @@ export function useComparisons() {
             body: JSON.stringify({ id, type: 'bookmark', name }),
           });
           if (!res.ok) {
-            const data = await res.json();
-            return { success: false, error: data.error };
+            try {
+              const data = await res.json();
+              return { success: false, error: data.error ?? '저장 실패' };
+            } catch {
+              return { success: false, error: `저장 실패 (${res.status})` };
+            }
           }
           fetchRecords();
           return { success: true };
         } catch {
-          return { success: false, error: '서버 오류' };
+          return { success: false, error: '네트워크 오류가 발생했습니다' };
         }
       } else {
         const ok = bookmarkLocal(id, name);
@@ -188,13 +192,17 @@ export function useComparisons() {
             body: JSON.stringify({ name, items, type: 'bookmark' }),
           });
           if (!res.ok) {
-            const data = await res.json();
-            return { success: false, error: data.error };
+            try {
+              const data = await res.json();
+              return { success: false, error: data.error ?? '저장 실패' };
+            } catch {
+              return { success: false, error: `저장 실패 (${res.status})` };
+            }
           }
           fetchRecords();
           return { success: true };
         } catch {
-          return { success: false, error: '서버 오류' };
+          return { success: false, error: '네트워크 오류가 발생했습니다' };
         }
       } else {
         const recs = readLocal();

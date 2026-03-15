@@ -24,24 +24,27 @@ export default function FavoriteButton({
 }: FavoriteButtonProps) {
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const favorited = isFavorite(aptName, dong);
-  const [warning, setWarning] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    if (warning) {
-      const timer = setTimeout(() => setWarning(null), 2000);
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 2000);
       return () => clearTimeout(timer);
     }
-  }, [warning]);
+  }, [toast]);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (favorited) {
       removeFavorite(aptName, dong);
+      setToast({ message: '관심단지에서 해제되었습니다', type: 'success' });
     } else {
       const result = addFavorite({ aptName, dong, lawdCd, latestPrice, buildYear });
-      if (!result.success && result.message) {
-        setWarning(result.message);
+      if (result.success) {
+        setToast({ message: '관심단지에 추가되었습니다', type: 'success' });
+      } else if (result.message) {
+        setToast({ message: result.message, type: 'error' });
       }
     }
   };
@@ -67,9 +70,14 @@ export default function FavoriteButton({
         />
       </button>
 
-      {warning && (
-        <div className="absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 shadow-md">
-          {warning}
+      {toast && (
+        <div className={cn(
+          'absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border px-3 py-2 text-xs shadow-md',
+          toast.type === 'success'
+            ? 'border-green-200 bg-green-50 text-green-700'
+            : 'border-red-200 bg-red-50 text-red-700',
+        )}>
+          {toast.message}
         </div>
       )}
     </div>
