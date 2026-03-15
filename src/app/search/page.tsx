@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useRouter as useNextRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown, ChevronUp, GitCompareArrows, X, Heart, Bookmark } from 'lucide-react';
+import { ChevronDown, ChevronUp, GitCompareArrows, X, Heart, Bookmark, Map, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFilter } from '@/hooks/use-filter';
 import { useSearchResults } from '@/hooks/use-search-results';
@@ -33,6 +33,7 @@ function SearchContent() {
   const navRouter = useNextRouter();
   const { filters, setFilter, setFilters, resetFilters, activeCount } = useFilter();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [mobileView, setMobileView] = useState<'list' | 'map'>('list');
   const [highlightedApt, setHighlightedApt] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>('latest');
   const [selectedApts, setSelectedApts] = useState<Set<string>>(new Set());
@@ -175,7 +176,7 @@ function SearchContent() {
     <div className="flex h-[calc(100dvh-56px)]">
       {showGuide && <SearchOverlayGuide />}
       {/* 지도 영역 */}
-      <div className="hidden flex-1 md:block">
+      <div className={cn('flex-1', mobileView === 'map' ? 'block' : 'hidden', 'md:block')}>
         <KakaoMap
           results={!activeIsLoading && !activeError && displayResults.length > 0 ? displayResults : EMPTY_RESULTS}
           highlightedApt={highlightedApt}
@@ -190,7 +191,7 @@ function SearchContent() {
       </div>
 
       {/* 리스트 영역 */}
-      <div className="flex w-full flex-col border-l border-border bg-white md:w-[420px]">
+      <div className={cn('flex flex-col border-l border-border bg-white md:w-[420px]', mobileView === 'map' ? 'hidden md:flex' : 'w-full')}>
         {/* 필터 토글 헤더 — 관심단지 모드에서는 숨김 */}
         {!favoritesOnly && (
           <>
@@ -306,7 +307,7 @@ function SearchContent() {
         )}
 
         {/* 결과 목록 */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 pb-16 md:pb-4">
           {/* 일반 검색 모드 빈 상태 */}
           {!favoritesOnly && !hasRegion && (
             <EmptyState
@@ -423,6 +424,39 @@ function SearchContent() {
           )}
         </div>
       </div>
+      {/* 모바일 탭 바 (md 미만에서만 표시) */}
+      <div className={cn(
+        'fixed bottom-0 left-0 right-0 z-40 flex md:hidden border-t border-border bg-white',
+        selectedApts.size > 0 ? 'bottom-[72px]' : 'bottom-0',
+      )}>
+        <button
+          type="button"
+          onClick={() => setMobileView('list')}
+          className={cn(
+            'flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors',
+            mobileView === 'list'
+              ? 'bg-estate-700 text-white'
+              : 'bg-gray-100 text-gray-500',
+          )}
+        >
+          <List className="h-4 w-4" />
+          목록
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileView('map')}
+          className={cn(
+            'flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors',
+            mobileView === 'map'
+              ? 'bg-estate-700 text-white'
+              : 'bg-gray-100 text-gray-500',
+          )}
+        >
+          <Map className="h-4 w-4" />
+          지도
+        </button>
+      </div>
+
       {/* 다중선택 비교 플로팅 바 */}
       {selectedApts.size > 0 && (
         <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-card-in">

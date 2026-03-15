@@ -352,3 +352,69 @@ CREATE INDEX idx_complexes_lawd   ON complexes(lawd_cd);
 | Sprint 5 | **아키텍처 피벗**: SQLite DB 도입, 배치 수집 스크립트, 데이터 파이프라인 | ✅ 완료 |
 | Sprint 6 | **사용자 인증**: 카카오 OAuth, 관심단지/비교분석 DB 영속화, 히스토리/즐겨찾기 | ✅ 완료 |
 | Sprint 7 | **기능 고도화**: 확장 필터 전면 구현, AI 인사이트, 3대 업무지구 접근성, 데이터 수집기 UI, 지도 성능 최적화 | ✅ 완료 |
+
+---
+
+## 상태 관리 흐름
+
+### 검색 필터 상태 (URL 기반)
+
+```
+URL Search Params (검색 필터 상태)
+  ↕ useFilter hook (양방향 동기화)
+  ↕ useSearchResults hook (API 호출 → 결과)
+  ↓
+  KakaoMap + ComplexList (표시)
+```
+
+- `useFilter`: `useSearchParams` / `useRouter`로 URL ↔ `FilterState` 양방향 바인딩. 필터 변경 시 URL 업데이트 → 뒤로가기/새로고침/공유 후 필터 복원 가능.
+- `useSearchResults`: `FilterState`를 받아 `/api/trade/search` 호출 → `ComplexTradeGroup[]` 반환. 로딩/에러 상태 포함.
+- `KakaoMap` ↔ `ComplexList` 양방향 하이라이트: 선택 단지 ID를 상위 `search/page.tsx` 로컬 state로 공유.
+
+### 사용자 데이터 상태 (로컬/DB 이중 패턴)
+
+```
+localStorage / DB (사용자 데이터)
+  ↕ useFavorites hook
+  │   ├ 비로그인: localStorage ('favorites' 키, 최대 20개)
+  │   └ 로그인: /api/user/favorites → Turso DB (user_favorites 테이블)
+  │             로그인 시 localStorage → DB 자동 동기화 (/api/user/favorites/sync)
+  ↕ useComparisons hook (동일 패턴)
+  │   ├ 비로그인: localStorage
+  │   └ 로그인: /api/user/comparisons → Turso DB (user_comparisons 테이블)
+  ↕ useFilterBookmarks hook (동일 패턴)
+      ├ 항상 localStorage (인증 불필요, 로컬 개인 설정)
+      └ 최대 5개 필터 조건 세트 저장
+```
+
+### 기타 로컬 상태
+
+| 상태 | 저장소 | 훅/컴포넌트 |
+|------|--------|------------|
+| 홈 페이지 필터 폼 | `useState` (제출 전 임시) | `app/page.tsx` |
+| 직장 최근 검색 | `localStorage` (최대 5개) | `WorkplaceSearch.tsx` |
+| 인증 세션 | NextAuth JWT (쿠키) | `useSession` / `auth()` |
+| 단지 상세 평형 선택 | `useState` | `AreaFilter.tsx` |
+
+---
+
+## 에러 처리 전략
+
+상세 내용: `docs/ERROR_STRATEGY.md` 참조
+
+```
+에러 처리 계층:
+  - API Route:    try-catch → { success: false, error: string } 구조화 응답
+                  외부 API 오류는 원인 + 컨텍스트 포함 (예: "ODsay API failed: timeout after 10s")
+  - 외부 API:     타임아웃 10초 + 재시도 (ODsay 최대 4회, 지수 백오프)
+  - 클라이언트:   ErrorState 컴포넌트 + "다시 시도" 버튼 (useSearchResults, useFavorites 등 각 훅에서 error 상태 노출)
+  - 전역:         app/error.tsx (Next.js 에러 바운더리), app/not-found.tsx (404)
+```
+
+| 계층 | 방식 | 복구 가능 여부 |
+|------|------|--------------|
+| Route Handler | `try-catch` → `{ success: false, error }` | 클라이언트에서 재시도 가능 |
+| 외부 API 호출 | 타임아웃(10s) + 재시도(ODsay 4회) | 일시적 장애 자동 복구 |
+| 클라이언트 훅 | `error` state + `retry()` 콜백 노출 | 사용자가 재시도 버튼으로 복구 |
+| 전역 에러 | `error.tsx` 에러 바운더리 | 페이지 새로고침으로 복구 |
+| 주변 분석 API | mock 데이터 폴백 또는 섹션 비활성화 | 기능 비활성화로 우회 |
