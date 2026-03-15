@@ -7,6 +7,12 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'html'],
+      include: ['src/lib/**', 'src/hooks/**'],
+      exclude: ['**/__tests__/**', '**/node_modules/**'],
+    },
   },
   resolve: {
     alias: {

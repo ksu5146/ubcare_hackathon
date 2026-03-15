@@ -141,9 +141,12 @@ export function useFavorites() {
     doSync();
   }, [status, session?.kakaoId, synced]);
 
-  // 로그아웃 시 synced 리셋
+  // 로그아웃 시 localStorage 초기화 + synced 리셋
   useEffect(() => {
     if (status === 'unauthenticated') {
+      snapshot = [];
+      writeStorage([]);
+      notifyAll();
       setSynced(false);
     }
   }, [status]);

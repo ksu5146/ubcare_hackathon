@@ -10,7 +10,7 @@ on:
 
 jobs:
   ci:
-    name: Lint, Test, Type Check, Build
+    name: Lint, Test (Coverage), Type Check, Build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +32,16 @@ jobs:
           NEXT_PUBLIC_KAKAO_MAP_KEY: dummy_kakao_map_key_for_ci
           NEXT_PUBLIC_ODSAY_API_KEY: dummy_odsay_api_key_for_ci
 
-      - name: Test
-        run: npm test
+      - name: Test with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
 
       - name: Type check
         run: npx tsc --noEmit
