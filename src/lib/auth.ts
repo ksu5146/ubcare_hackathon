@@ -42,14 +42,6 @@ async function initUserSchema(): Promise<void> {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
-    CREATE TABLE IF NOT EXISTS user_filters (
-      id         INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      name       TEXT NOT NULL,
-      filters    TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
     CREATE TABLE IF NOT EXISTS user_filter_bookmarks (
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id    INTEGER NOT NULL,
@@ -72,7 +64,6 @@ async function initUserSchema(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_users_kakao ON users(kakao_id);
     CREATE INDEX IF NOT EXISTS idx_user_favorites_user ON user_favorites(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_comparisons_user ON user_comparisons(user_id);
-    CREATE INDEX IF NOT EXISTS idx_user_filters_user ON user_filters(user_id);
     CREATE INDEX IF NOT EXISTS idx_filter_bm_user ON user_filter_bookmarks(user_id);
   `);
 }
