@@ -6,6 +6,7 @@ import { Heart, History, MapPin, HelpCircle } from 'lucide-react';
 import FavoritesList from '@/components/favorites/FavoritesList';
 import { SearchOverlayGuide } from '@/components/guide/SearchOverlayGuide';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 export function Header() {
   const [favOpen, setFavOpen] = useState(false);
@@ -59,6 +60,7 @@ export function Header() {
               <Heart className="h-4 w-4" />
               <span className="hidden md:inline">나의관심단지</span>
             </button>
+            <ThemeToggle />
             <UserMenu />
           </nav>
         </div>
