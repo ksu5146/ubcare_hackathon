@@ -75,7 +75,7 @@
 | F2-3 | 지도-리스트 연동 | P0 | ✅ | `app/search/page.tsx` | 양방향 하이라이트 동기화 |
 | F2-4 | 검색 결과 정렬 | P1 | ✅ | `components/filter/SortSelect.tsx` | 최신순/가격높은순/가격낮은순/면적넓은순/세대수순 |
 | F2-5 | 페이지네이션 | P1 | ✅ | `api/trade/search` | API에 page/pageSize 파라미터 + pagination 응답 구현 |
-| F2-6 | 검색 결과 요약 | P1 | 🔲 | - | "총 XX개 단지, 평균 거래가 X억" 표시. 미구현 |
+| F2-6 | 검색 결과 요약 | P1 | ⚠️ | `search/page.tsx` | "N개 단지" 개수 표시 구현 완료, 평균 거래가 표시 미구현 |
 
 ---
 
@@ -156,7 +156,7 @@
 | F7-4 | 관심단지 DB 저장 | P0 | ✅ | `app/api/user/favorites/route.ts`, `hooks/use-favorites.ts` | 로그인 시 DB, 비로그인 시 localStorage, 계정별 데이터 격리 |
 | F7-5 | 관심단지 로그인 동기화 | P0 | ✅ | `app/api/user/favorites/sync/route.ts` | 로그인 시 로컬→DB 병합 |
 | F7-6 | 비교분석 DB 저장 | P0 | ✅ | `app/api/user/comparisons/route.ts`, `hooks/use-comparisons.ts` | 히스토리/즐겨찾기 구분, 로그인 시 DB, 계정별 데이터 격리 |
-| F7-7 | 필터 프리셋 서버 저장 | P2 | 🔲 | `app/api/user/filters/route.ts` | user_filters 테이블 준비 완료, UI 미구현 |
+| F7-7 | 필터 프리셋 서버 저장 | P2 | ✅ | `api/user/filter-bookmarks/route.ts` | user_filter_bookmarks 테이블 + API(GET/POST/DELETE) + use-filter-bookmarks 훅 DB 연동 |
 | F7-8 | 나의관심단지 지도 | P1 | ✅ | `app/favorites/page.tsx` (또는 Navbar 연결 페이지) | 관심단지만 독립 데이터 패스로 지도 표시. v2.4 구현 완료 |
 
 ---
@@ -199,9 +199,9 @@
 | 우선순위 | 전체 | 완료 | 비율 |
 |----------|------|------|------|
 | P0 | 30 | 30 | 100% |
-| P1 | 32 | 25 | 78% |
-| P2 | 9 | 3 | 33% |
-| **합계** | **71** | **59** | **83%** |
+| P1 | 32 | 26 | 81% |
+| P2 | 9 | 4 | 44% |
+| **합계** | **71** | **60** | **85%** |
 
 > **v2.4 기준 변경 사항**:
 > - F0-9 Vercel Cron 증분 수집 구현 완료 (🔲 → ✅)
