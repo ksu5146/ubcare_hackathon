@@ -22,7 +22,21 @@ npm run test:coverage   # 커버리지 포함 실행 (coverage/ 디렉토리에 
 
 ---
 
-## 테스트 파일 목록 (13개 파일, 143 케이스)
+## 커버리지 현황
+
+```
+Statements   : 6.55% ( 139/2121 )
+Branches     : 4.53% ( 73/1610 )
+Functions    : 6.62% ( 19/287 )
+Lines        : 6.44% ( 118/1830 )
+```
+
+> 커버리지 대상: `src/lib/**`, `src/hooks/**`. 컴포넌트/API Route는 대상 외.
+> `npm run test:coverage`로 HTML 리포트 생성 → `coverage/index.html`
+
+---
+
+## 테스트 파일 목록 (18개 파일, 182 케이스)
 
 ### 단위 테스트 — `src/lib/__tests__/`
 
