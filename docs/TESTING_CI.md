@@ -145,3 +145,71 @@ test: {
 4. **Mock**: `vi.mock`으로 외부 의존성(fetch, DB) 격리
 5. **환경변수**: `vi.stubEnv`로 안전하게 격리
 6. **기존 코드 수정 금지**: 테스트 파일만 추가
+
+---
+
+## 롤백 전략
+
+### Vercel 배포 롤백
+1. Vercel Dashboard → Deployments
+2. 이전 정상 배포 선택 → `...` → **Promote to Production**
+3. 즉시 이전 버전으로 트래픽 전환 (DNS 변경 없음, 수 초 내 완료)
+
+### 코드 롤백
+```bash
+# 특정 커밋 되돌리기
+git revert <commit-hash>
+git push origin main
+# → Vercel 자동 재배포
+
+# 여러 커밋 되돌리기
+git revert HEAD~3..HEAD --no-commit
+git commit -m "revert: 최근 3개 커밋 롤백"
+git push
+```
+
+### DB 마이그레이션 롤백
+- Turso Hobby 플랜은 point-in-time recovery 미지원
+- **백업**: 마이그레이션 전 `turso db dump` 실행
+- **안전 원칙**: 테이블/컬럼 추가는 하위 호환, 컬럼 삭제/타입 변경은 별도 검증 필수
+- **파괴적 변경 시**: 기존 컬럼 유지 + 새 컬럼 추가 → 데이터 마이그레이션 → 이전 컬럼 삭제 (3단계)
+
+---
+
+## DB 마이그레이션 전략
+
+### 현재 방식
+- `auth.ts`의 `initUserSchema()` → `CREATE TABLE IF NOT EXISTS` (앱 시작 시 자동 실행)
+- `migrateUserSchema()` → `PRAGMA table_info`로 컬럼 확인 후 `ALTER TABLE` 추가
+
+### 마이그레이션 흐름
+```
+1. 개발자가 initUserSchema()에 새 테이블/컬럼 추가
+2. migrateUserSchema()에 기존 DB 호환 로직 추가
+3. 배포 시 첫 API 호출에서 자동 실행 (별도 스크립트 불필요)
+4. 파괴적 변경(컬럼 삭제, 타입 변경)은 수동 처리 필요
+```
+
+### 대안 검토
+
+| 도구 | 장점 | 단점 | 채택 |
+|------|------|------|------|
+| Drizzle ORM | 타입 안전 마이그레이션 | libSQL 지원 초기, 학습 비용 | 미채택 |
+| 수동 SQL + initSchema | 현재 방식, 단순 | 복잡한 마이그레이션 추적 어려움 | **채택** |
+| Turso CLI dump/restore | 전체 백업 | point-in-time 불가 | 백업용 |
+
+---
+
+## Codecov 커버리지 연동
+
+CI 파이프라인에서 Codecov로 커버리지를 자동 업로드합니다:
+```yaml
+# .github/workflows/ci.yml
+- name: Upload coverage to Codecov
+  uses: codecov/codecov-action@v4
+  with:
+    files: coverage/coverage-final.json
+```
+
+### 번들 크기 모니터링
+빌드 후 `.next/static/` 크기를 CI 로그에 출력하여 번들 증가를 추적합니다.

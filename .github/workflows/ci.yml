@@ -43,6 +43,13 @@ jobs:
           path: coverage/
           retention-days: 14
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: coverage/coverage-final.json
+          fail_ci_if_error: false
+
       - name: Type check
         run: npx tsc --noEmit
         env:
@@ -54,3 +61,11 @@ jobs:
         env:
           NEXT_PUBLIC_KAKAO_MAP_KEY: dummy_kakao_map_key_for_ci
           NEXT_PUBLIC_ODSAY_API_KEY: dummy_odsay_api_key_for_ci
+
+      - name: Bundle size report
+        if: always()
+        run: |
+          echo "=== Bundle Size ==="
+          du -sh .next/static/ 2>/dev/null || true
+          echo "=== Build Summary ==="
+          ls -lh .next/*.json 2>/dev/null || true
