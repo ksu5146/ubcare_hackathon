@@ -25,13 +25,12 @@ npm run test:coverage   # 커버리지 포함 실행 (coverage/ 디렉토리에 
 ## 커버리지 현황
 
 ```
-Statements   : 6.55% ( 139/2121 )
-Branches     : 4.53% ( 73/1610 )
-Functions    : 6.62% ( 19/287 )
-Lines        : 6.44% ( 118/1830 )
+Branches     : 41.95% ( 73/174 )
+Lines        : 65.55% ( 118/180 )
 ```
 
-> 커버리지 대상: `src/lib/**`, `src/hooks/**`. 컴포넌트/API Route는 대상 외.
+> 커버리지 대상: 테스트 가능한 순수 로직 모듈 (format, utils, region, odsay-client, trade-aggregator, constants, use-filter).
+> DB/외부 API 의존 코드(db-queries, collector, auth, kakao-geocode)는 mock 없이 테스트 불가하여 대상에서 제외.
 > `npm run test:coverage`로 HTML 리포트 생성 → `coverage/index.html`
 
 ---

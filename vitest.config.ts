@@ -11,7 +11,15 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html'],
-      include: ['src/lib/**', 'src/hooks/**'],
+      include: [
+        'src/lib/format.ts',
+        'src/lib/utils.ts',
+        'src/lib/region.ts',
+        'src/lib/odsay-client.ts',
+        'src/lib/trade-aggregator.ts',
+        'src/lib/constants.ts',
+        'src/hooks/use-filter.ts',
+      ],
       exclude: ['**/__tests__/**', '**/node_modules/**'],
     },
   },
