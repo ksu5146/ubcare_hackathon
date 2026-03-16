@@ -6,18 +6,45 @@ import type { ApiResponse } from '@/types/api';
  * GET /api/trade/search — 확장 필터 기반 실거래가 검색 (v2)
  *
  * 기본 필터:
- *   lawdCd (콤마 구분, 최대 3개), fromYm, toYm,
- *   priceMin, priceMax, areaMin, areaMax,
- *   floorMin, floorMax, buildYearMin, buildYearMax,
- *   aptName, umdNm, includeDirectDeal,
- *   householdsMin, householdsMax
+ *   lawdCd        법정동코드 5자리, 콤마 구분 최대 3개 (필수)
+ *   fromYm        검색 시작 년월 (YYYYMM)
+ *   toYm          검색 종료 년월 (YYYYMM)
+ *   priceMin      최소 거래금액 (만원)
+ *   priceMax      최대 거래금액 (만원)
+ *   areaMin       최소 전용면적 (m²)
+ *   areaMax       최대 전용면적 (m²)
+ *   floorMin      최소 층수
+ *   floorMax      최대 층수
+ *   buildYearMin  최소 건축년도
+ *   buildYearMax  최대 건축년도
+ *   aptName       단지명 부분 검색 (LIKE)
+ *   umdNm         읍면동명 부분 검색 (LIKE)
+ *   includeDirectDeal  직거래 포함 여부 (기본 false)
+ *   excludeCanceled    해제건 제외 여부 (기본 true)
+ *   householdsMin 최소 세대수
+ *   householdsMax 최대 세대수
  *
- * 고급 필터 (complexes JOIN):
- *   parkingRatioMin, hasUndergroundParking,
- *   subwayTimeMax, heatType
+ * 고급 필터 (complexes 테이블 JOIN):
+ *   parkingRatioMin      세대당 최소 주차 비율
+ *   hasUndergroundParking 지하 주차장 여부 (true/false)
+ *   subwayTimeMax        지하철 도보 최대 시간 (분)
+ *   heatType             난방방식 (예: 지역난방)
+ *   hallType             복도유형 (예: 계단식)
+ *   builder              시공사 부분 검색 (LIKE)
+ *   saleType             분양형태
+ *   hasElevator          승강기 여부 (true/false)
+ *   roomEstimate         추정 방 수
+ *   vlRatMax             최대 용적률 (%)
  *
  * 정렬/페이징:
- *   sortBy, sortOrder, page, pageSize
+ *   sortBy    정렬 기준 (dealAmount | area | buildYear | dealDate | floor)
+ *   sortOrder 정렬 방향 (asc | desc, 기본 desc)
+ *   page      페이지 번호 (1부터, 기본 1)
+ *   pageSize  페이지 크기 (기본 20, 최대 100)
+ *
+ * 그룹핑 모드:
+ *   grouped=true  단지별 그룹핑 결과 반환 (ComplexTradeGroup[])
+ *                 — 검색 페이지 지도/리스트 뷰에서 사용
  */
 export async function GET(request: NextRequest) {
   try {

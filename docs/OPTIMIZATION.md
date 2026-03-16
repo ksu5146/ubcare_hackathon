@@ -129,10 +129,10 @@
 | HIGH | 필터 로직 중복 | `searchTrades`/`searchTradeGrouped` 공통 빌더 추출 |
 | HIGH | 페이지네이션 총 건수 오류 | `searchTradeGrouped`의 `total: groups.length`가 실제 총 건수가 아님 |
 | HIGH | InMemoryCache LRU | 크기 제한/퇴거 정책 없음 → 메모리 누수 가능 |
-| MEDIUM | 모바일 지도 | 검색 페이지에서 모바일 지도 완전 숨김 → 탭 전환 UI 필요 |
-| MEDIUM | 모바일 비교 기능 | Ctrl+클릭이 모바일에서 동작 안 함 → 길게 누르기/체크박스 대안 |
+| ~~MEDIUM~~ | ~~모바일 지도~~ | ✅ **해결 완료 (v2.4)** — 모바일 지도/목록 탭 전환 UI 구현 (`search/page.tsx`) |
+| ~~MEDIUM~~ | ~~모바일 비교 기능~~ | ✅ **해결 완료 (v2.4)** — long-press(500ms) 비교 선택 구현 (`ComplexCard.tsx`, `KakaoMap.tsx`) |
 | MEDIUM | 검색 디바운스 취소 | AbortController로 이전 요청 취소 추가 필요 |
 | MEDIUM | API rate limiting | 외부 API 프록시 경로에 rate limiting 없음 |
-| MEDIUM | 접근성: 슬라이더 터치 타겟 | 16×16px → 최소 44×44px 필요 |
+| ~~MEDIUM~~ | ~~접근성: 슬라이더 터치 타겟~~ | ✅ **해결 완료 (v2.4)** — Slider thumb 44×44px 확대 (`PriceRange`, `AreaRange`, `FloorPreset`) |
 | LOW | region-codes.json 정적 import | `region.ts`에서 정적 import → 클라이언트 번들 포함 |
 | LOW | 다크 모드 | CSS 변수가 라이트 모드만 정의됨 |

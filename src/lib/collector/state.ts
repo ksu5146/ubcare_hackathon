@@ -1,3 +1,12 @@
+/**
+ * @module collector/state
+ * @description 데이터 수집 상태(collection_state 테이블) CRUD 헬퍼.
+ *
+ * 각 수집 작업은 (collector_type, lawd_cd, deal_ym) 조합으로 고유 식별되며,
+ * pending → in_progress → completed | failed 순으로 상태가 전이된다.
+ * Vercel Cron이 동시에 여러 번 트리거되는 경우에도 `in_progress` 상태
+ * 체크를 통해 중복 수집을 방지한다.
+ */
 import { getClient } from '../db';
 import type { CollectionState, CollectionStatus, CollectorType, CollectionProgress } from './types';
 

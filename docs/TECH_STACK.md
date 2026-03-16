@@ -189,12 +189,49 @@ NextAuth v5 선정 근거 요약:
 | **해결** | `.npmrc`에 `node-options=--use-system-ca` 추가 — 시스템 CA 인증서 체인 사용 |
 | **영향 범위** | 개발 환경 한정. 배포 환경(Vercel)에서는 불필요 |
 
-## 15. Icons: lucide-react
+## 15. UI 아이콘: lucide-react
 
 | 항목 | 내용 |
 |------|------|
-| **선정 이유** | 트리셰이킹 지원, 일관된 스트로크 아이콘, React 네이티브 컴포넌트 |
-| **대안** | react-icons — 번들에 불필요한 아이콘 포함 가능 |
+| **선정 이유** | 트리 셰이킹 지원, 일관된 디자인 시스템, 경량 (아이콘당 ~1KB) |
+| **대안** | react-icons (번들 크기 큼), heroicons (아이콘 수 적음), phosphor (생태계 소규모) |
+| **최적화** | `optimizePackageImports`에 포함하여 사용하지 않는 아이콘 자동 제외 |
+
+## 16. 폰트: Pretendard (시스템 폰트 폴백)
+
+| 항목 | 내용 |
+|------|------|
+| **선정 이유** | 한글 가독성 최적화, 가변 폰트(Variable Font) 지원으로 파일 수 최소화 |
+| **적용 방식** | CDN(`next/font` 또는 link preload)으로 FOUT 최소화 |
+| **대안** | Noto Sans KR (구글 폰트, FOIT 발생 가능), 시스템 폰트만 사용 (디자인 일관성 저하) |
+
+## 의존성 정당성 분석 (package.json)
+
+### production 의존성 (16개)
+
+| 패키지 | 용도 | 대체 불가 사유 |
+|--------|------|---------------|
+| `next` | 프레임워크 | 핵심 |
+| `react` / `react-dom` | UI 렌더링 | 핵심 |
+| `@libsql/client` | Turso DB 연결 | DB 계층 |
+| `next-auth` | OAuth 인증 | 카카오 로그인 |
+| `recharts` | 실거래가 차트 | 시각화 |
+| `lucide-react` | 아이콘 | UI |
+| `tailwindcss` / `@tailwindcss/postcss` | 스타일링 | 디자인 시스템 |
+| `@radix-ui/*` (dialog, select, slider, slot, tabs, tooltip) | UI 프리미티브 | 접근성 보장 |
+| `class-variance-authority` | 조건부 스타일 | shadcn/ui 의존 |
+| `clsx` / `tailwind-merge` | 클래스 합성 | 유틸리티 |
+
+### devDependencies (8개)
+
+| 패키지 | 용도 |
+|--------|------|
+| `typescript` / `@types/*` | 타입 안전성 |
+| `eslint` / `eslint-config-next` | 코드 품질 |
+| `vitest` / `@vitest/coverage-v8` / `@vitejs/plugin-react` | 테스트 |
+| `better-sqlite3` | 마이그레이션 스크립트 전용 (런타임 미사용) |
+
+**의존성 최소화 원칙**: 각 패키지가 명확한 단일 목적을 가지며, 기능 중복 없음. Radix UI는 개별 패키지로 필요한 컴포넌트만 설치 (모노레포 아님).
 
 ## 13. 배포: Vercel
 

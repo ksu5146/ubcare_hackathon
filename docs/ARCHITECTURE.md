@@ -398,6 +398,23 @@ localStorage / DB (사용자 데이터)
 
 ---
 
+## 동시성 제어
+
+### Turso 원격 DB
+- Turso는 서버 측에서 직렬화(serialization)를 보장 — 동시 쓰기 시 자동 대기열 처리
+- libSQL 프로토콜이 HTTP/WebSocket 기반이므로 connection pool 불필요
+- 읽기는 엣지 복제본에서 병렬 처리, 쓰기는 primary에서 직렬 처리
+
+### Vercel Serverless 환경
+- 각 함수 인스턴스가 독립 실행 — 메모리 공유 없음
+- `getClient()` 싱글턴은 함수 인스턴스 내에서만 유효 (cold start마다 새 연결)
+- 데이터 수집 Cron: 동시 실행 방지를 위해 `collection_state` 테이블로 in_progress 상태 체크
+
+### 경쟁 조건 방지
+- 즐겨찾기 추가: `INSERT OR IGNORE` (중복 삽입 무시)
+- 비교 이력 저장: 동일 조합 감지 후 `UPDATE` (시간만 갱신)
+- 필터 북마크: 10개 제한은 `SELECT COUNT` → `INSERT` 순서로 비관적 체크
+
 ## 에러 처리 전략
 
 상세 내용: `docs/ERROR_STRATEGY.md` 참조

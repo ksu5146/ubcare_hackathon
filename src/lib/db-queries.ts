@@ -1,3 +1,18 @@
+/**
+ * @module db-queries
+ * @description Turso(libSQL) DB 쿼리 헬퍼 함수 모음 (v2.3 신규).
+ *
+ * 실거래가 검색(searchTrades / searchTradeGrouped), 단지 목록/상세 조회,
+ * 사용자 즐겨찾기·비교분석 CRUD 등 Route Handler에서 공통으로 사용하는
+ * DB 접근 로직을 중앙화한다. 직접 SQL을 사용하며 ORM 레이어 없음.
+ *
+ * 주요 export:
+ *   - searchTrades(params)        — 확장 필터 기반 실거래가 목록 조회 (페이징)
+ *   - searchTradeGrouped(params)  — 동일 파라미터로 단지별 그룹핑 결과 반환
+ *   - getComplexList(lawdCd)      — 법정동코드 기준 단지 목록
+ *   - getComplexById(aptSeq)      — 단지 상세 정보 (complexes 테이블)
+ *   - getTradeHistory(aptSeq)     — 단지별 실거래가 이력 (최대 60개월)
+ */
 import { getClient, initSchema } from './db';
 import type { ApartmentTrade, ComplexTradeGroup } from '@/types/trade';
 import type { ComplexListItem, ComplexInfo } from '@/types/complex';
